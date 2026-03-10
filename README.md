@@ -49,15 +49,18 @@ The player controls the **Human (C)** using the keyboard.
 * **Ability Logic**: Once activated, the Human gains a temporary status effect tracked by `licznik` and `cooldown` variables. 
 
 ---
+<img width="570" height="858" alt="image" src="https://github.com/user-attachments/assets/1e9ae4fe-6d26-4607-9a47-0939aedfadc4" />
+
 
 ### How to Use
 
 #### 1. Running the Simulation
 When the script starts, you will be prompted in the console to enter the map dimensions:
 ```bash
-Podaj szerokosc mapy: 20
-Podaj wysokosc mapy: 20
+Podaj szerokosc mapy: 15
+Podaj wysokosc mapy: 15
 ```
+
 #### 2. Interaction
 * **Next Turn**: Click the "Wykonaj Ture" button or press an arrow key to progress the simulation.
 * **Add Organism**: Click on any empty square in the grid to open a menu and manually place a new organism.
