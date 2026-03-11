@@ -1,14 +1,10 @@
-from abc import ABC, abstractmethod
+from abc import ABC
 
 from Base.Organizm import Organizm
 
 
 class Roslina(Organizm, ABC):
-    @abstractmethod
-    def akcja(self, plansza, gra, szerokosc, wysokosc, keycode):
-        pass
 
-    @abstractmethod
-    def kolizja(self, off, def_, plansza, szerokosc, wysokosc):
-        pass
-    
+    def standard_akcja_rozsiew(self, szansa: int):
+        import random
+        self._rozsiane = random.randint(0, szansa - 1) == 0

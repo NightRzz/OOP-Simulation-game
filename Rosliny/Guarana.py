@@ -1,20 +1,21 @@
-import random
 from Base.Roslina import Roslina
 
 
 class Guarana(Roslina):
-    def __init__(self, print_log, x=0, y=0, sila=0, wiek=0):
-        super().__init__(x, y, 'G', "Guarana", sila, 0)
-        self.wiek = wiek
-        self.rozsiane = False
-        self.print_log = print_log
+    STRENGTH_BONUS = 3
+    DEFAULT_SILA = 0
+
+    def __init__(self, print_log, x=0, y=0, sila=DEFAULT_SILA, wiek=0):
+        super().__init__(x, y, 'G', "Guarana", sila, 0, print_log, wiek)
 
     def akcja(self, plansza, gra, szerokosc, wysokosc, keycode):
-        rozsiew = random.randint(0, 24)
-        self.rozsiane = rozsiew == 0
+        self.standard_akcja_rozsiew(szansa=25)
 
-    def kolizja(self, off, def_, plansza, szerokosc, wysokosc):
-        off.setSila(off.getSila() + 3)
-        self.print_log(f"{def_.getImie()} zostaje zjedzona przez {off.getImie()}"
-                       f" i zwieksza jego sile o 3 pkt.\n Obecna sila {off.getImie()} wynosi {off.getSila()}")
-        return off
+    def kolizja(self, other, plansza, szerokosc, wysokosc):
+        other.sila += self.STRENGTH_BONUS
+        self.print_log(
+            f"{self.imie} zostaje zjedzona przez {other.imie}"
+            f" i zwieksza jego sile o {self.STRENGTH_BONUS} pkt."
+            f" Obecna sila {other.imie} wynosi {other.sila}"
+        )
+        return other

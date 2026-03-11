@@ -1,33 +1,31 @@
-import random
 from Base.Roslina import Roslina
 from Base.Zwierze import Zwierze
+from Zwierzeta.CyberOwca import CyberOwca
 
 
 class Barszcz(Roslina):
-    def __init__(self, print_log, x=0, y=0, sila=10, wiek=0):
-        super().__init__(x, y, 'B', "Barszcz Sosnowskiego", sila, 0)
-        self.wiek = wiek
-        self.rozsiane = False
-        self.print_log = print_log
+    DEFAULT_SILA = 10
+
+    def __init__(self, print_log, x=0, y=0, sila=DEFAULT_SILA, wiek=0):
+        super().__init__(x, y, 'B', "Barszcz Sosnowskiego", sila, 0, print_log, wiek)
 
     def akcja(self, plansza, gra, szerokosc, wysokosc, keycode):
-        self.eksterminacja(plansza, gra)
-        rozsiew = random.randint(0, 49)
-        self.rozsiane = rozsiew == 0
+        self._exterminate_neighbours(plansza, gra)
+        self.standard_akcja_rozsiew(szansa=50)
 
-    def kolizja(self, off, def_, plansza, szerokosc, wysokosc):
-        if off.id == 'K':
-            return off
-        return def_
+    def kolizja(self, other, plansza, szerokosc, wysokosc):
+        if isinstance(other, CyberOwca):
+            self.print_log(f"{other.imie} zjada {self.imie}")
+            return other
+        return self
 
-    def eksterminacja(self, plansza, gra):
-        for i in range(len(gra)):
-            org = gra[i]
-            if (isinstance(org, Zwierze) and org.id != 'K') and \
-                    ((org.getX() == self._x - 1 and org.getY() == self._y) or
-                     (org.getX() == self._x + 1 and org.getY() == self._y) or
-                     (org.getY() == self._y - 1 and org.getX() == self._x) or
-                     (org.getY() == self._y + 1 and org.getX() == self._x)):
-                self.print_log(f"{org.getImie()} umiera przez Barszcz Sosnowskiego")
-                plansza[org.getX()][org.getY()] = None
+    def _exterminate_neighbours(self, plansza, gra):
+        neighbours = {(self._x + dx, self._y + dy) for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]}
+        for i, org in enumerate(gra):
+            if (org is not None
+                    and isinstance(org, Zwierze)
+                    and not isinstance(org, CyberOwca)
+                    and (org.x, org.y) in neighbours):
+                self.print_log(f"{org.imie} umiera przez Barszcz Sosnowskiego")
+                plansza[org.x][org.y] = None
                 gra[i] = None

@@ -1,69 +1,73 @@
 from Base.Zwierze import Zwierze
 
+_KEY_UP      = 38
+_KEY_DOWN    = 40
+_KEY_LEFT    = 37
+_KEY_RIGHT   = 39
+_KEY_ABILITY = 49
+
+_ABILITY_STRENGTH_BONUS = 5
+_ABILITY_DURATION       = 6
+_ABILITY_COOLDOWN_READY = 10
+
 
 class Czlowiek(Zwierze):
-    def __init__(self, print_log, x=0, y=0, sila=5, wiek=0, cooldown=6, licznik=0, wlacz=False):
-        super().__init__(x, y, 'C', "Czlowiek", sila, 4)
-        self.wiek = wiek
-        self.cooldown = cooldown
-        self.licznik = licznik
-        self.wlacz = wlacz
-        self.print_log = print_log
+    DEFAULT_SILA = 5
 
-    def akcja(self, plansza, gra, szerokosc, wysokosc, keycode):
-        key = 0
-        if keycode is not None:
-            key = keycode
-        if self.licznik == 0 and not self.wlacz:
-            self.cooldown += 1
-        if self.wlacz and self.cooldown > 5:
-            if self.licznik < 6:
+    def __init__(self, print_log, x=0, y=0, sila=DEFAULT_SILA, wiek=0, cooldown=6, licznik=0, wlacz=False):
+        super().__init__(x, y, 'C', "Czlowiek", sila, 4, print_log, wiek)
+        self._cooldown = cooldown
+        self._licznik = licznik
+        self._wlacz = wlacz
+
+    @property
+    def cooldown(self) -> int:
+        return self._cooldown
+
+    @property
+    def licznik(self) -> int:
+        return self._licznik
+
+    @property
+    def wlacz(self) -> bool:
+        return self._wlacz
+
+    def _tick_ability(self):
+        if self._wlacz:
+            if self._licznik < _ABILITY_DURATION:
                 self._sila -= 1
             else:
-                self.wlacz = False
-                self.licznik = 0
-                self.cooldown = 0
+                self._wlacz = False
+                self._licznik = 0
+                self._cooldown = 0
                 self.print_log("Umiejetnosc czlowieka przestala dzialac")
         else:
-            self.cooldown += 1
+            self._cooldown += 1
 
-        if key == 38 and self._x > 0:
+    def _activate_ability(self):
+        if self._cooldown < _ABILITY_COOLDOWN_READY:
+            self.print_log("Umiejetnosc czlowieka nie gotowa")
+        elif not self._wlacz:
+            self.print_log("Umiejetnosc czlowieka wlaczona")
+            self._sila += _ABILITY_STRENGTH_BONUS
+            self._wlacz = True
+
+    def akcja(self, plansza, gra, szerokosc, wysokosc, keycode):
+        self._tick_ability()
+        key = keycode or 0
+        if key == _KEY_UP and self._x > 0:
             self._x -= 1
-        elif key == 40 and self._x < wysokosc - 1:
+        elif key == _KEY_DOWN and self._x < wysokosc - 1:
             self._x += 1
-        elif key == 37 and self._y > 0:
+        elif key == _KEY_LEFT and self._y > 0:
             self._y -= 1
-        elif key == 39 and self._y < szerokosc - 1:
+        elif key == _KEY_RIGHT and self._y < szerokosc - 1:
             self._y += 1
-        elif key == 49:
-            if self.cooldown < 10:
-                self.print_log("Umiejetnosc czlowieka nie gotowa")
-            elif not self.wlacz and self.cooldown > 10:
-                self.print_log("Umiejetnosc czlowieka wlaczona")
-                self._sila += 5
-                self.wlacz = True
-
+        elif key == _KEY_ABILITY:
+            self._activate_ability()
         self.print_log(f"Ruszasz sie na pole {self._x} {self._y} z sila {self._sila}")
+        if self._wlacz:
+            self._licznik += 1
 
-    def kolizja(self, off, def_, plansza, szerokosc, wysokosc):
-        if def_.id == self.id:  # broni
-            if def_.getSila() > off.getSila():
-                self.print_log(f"{def_.getImie()} wygyrwa z {off.getImie()}")
-                return def_
-            else:
-                self.print_log(f"{def_.getImie()} przegrywa z {off.getImie()}")
-                return off
-        elif off.id == self.id:  # atakuje
-            if off.getSila() > def_.getSila():
-                if off == def_.kolizja(off, def_, plansza, szerokosc, wysokosc):
-                    self.print_log(f"{off.getImie()} wygyrwa z {def_.getImie()}")
-                    return off
-                elif def_.zolwodparlatak:
-                    return def_
-            elif off.getSila() == def_.getSila():
-                self.print_log(f"{off.getImie()} wygrywa z {def_.getImie()}")
-                return off
-            else:
-                self.print_log(f"{off.getImie()} przegrywa z {def_.getImie()}")
-                return def_
-        return None
+    def kolizja(self, other, plansza, szerokosc, wysokosc):
+        return self.standard_kolizja(other, plansza, szerokosc, wysokosc)

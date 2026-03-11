@@ -1,73 +1,92 @@
-class Organizm:
-    def __init__(self, x, y, orgid, imie, sila, inicjatywa):
-        self.id = orgid
-        self.rozsiane = False
-        self.rozmnoz = False
-        self.cooldown = 0
-        self.licznik = 0
-        self.wlacz = False
-        self.zolwodparlatak = False
+from abc import ABC, abstractmethod
+from typing import Callable
 
+
+class Organizm(ABC):
+    def __init__(self, x: int, y: int, orgid: str, imie: str, sila: int, inicjatywa: int,
+                 print_log: Callable[[str], None], wiek: int = 0):
+        self._id = orgid
+        self._rozsiane = False
+        self._rozmnoz = False
+        self._zolwodparlatak = False
         self._x = x
         self._y = y
         self._imie = imie
         self._sila = sila
         self._inicjatywa = inicjatywa
-        self._wiek = 0
+        self._wiek = wiek
+        self._print_log = print_log
 
-    def setCooldown(self, cooldown):
-        self.cooldown = cooldown
+    def print_log(self, message: str):
+        self._print_log(message)
 
-    def setLicznik(self, licznik):
-        self.licznik = licznik
+    @property
+    def id(self) -> str:
+        return self._id
 
-    def setWlacz(self, wlacz):
-        self.wlacz = wlacz
-
-    def setX(self, x):
-        self._x = x
-
-    def getX(self):
+    @property
+    def x(self) -> int:
         return self._x
 
-    def setY(self, y):
-        self._y = y
+    @x.setter
+    def x(self, value: int):
+        self._x = value
 
-    def getY(self):
+    @property
+    def y(self) -> int:
         return self._y
 
-    def getID(self):
-        return self.id
+    @y.setter
+    def y(self, value: int):
+        self._y = value
 
-    def getImie(self):
-        return self._imie
-
-    def setImie(self, imie):
-        self._imie = imie
-
-    def getSila(self):
+    @property
+    def sila(self) -> int:
         return self._sila
 
-    def setSila(self, sila):
-        self._sila = sila
+    @sila.setter
+    def sila(self, value: int):
+        self._sila = value
 
-    def getInicjatywa(self):
+    @property
+    def inicjatywa(self) -> int:
         return self._inicjatywa
 
-    def setInicjatywa(self, inicjatywa):
-        self._inicjatywa = inicjatywa
-
-    def getWiek(self):
+    @property
+    def wiek(self) -> int:
         return self._wiek
 
-    def setId(self, id):
-        self.id = id
+    @property
+    def imie(self) -> str:
+        return self._imie
 
-    def setWiek(self, wiek):
-        self._wiek = wiek
+    @property
+    def rozsiane(self) -> bool:
+        return self._rozsiane
 
-    def akcja(self, plansza, gra, szerokosc, wysokosc, keycode):
+    @property
+    def rozmnoz(self) -> bool:
+        return self._rozmnoz
+
+    @property
+    def zolwodparlatak(self) -> bool:
+        return self._zolwodparlatak
+
+    def begin_turn(self):
+        self._rozsiane = False
+        self._rozmnoz = False
+        self._zolwodparlatak = False
+
+    def end_turn(self):
+        self._wiek += 1
+
+    def czy_rozmnaza_sie(self, other: 'Organizm') -> bool:
+        return type(self) is type(other)
+
+    @abstractmethod
+    def akcja(self, plansza, gra, szerokosc: int, wysokosc: int, keycode):
         pass
 
-    def kolizja(self, off, def_, plansza, szerokosc, wysokosc):
+    @abstractmethod
+    def kolizja(self, other: 'Organizm', plansza, szerokosc: int, wysokosc: int) -> 'Organizm':
         pass

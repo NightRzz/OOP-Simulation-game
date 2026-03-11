@@ -1,17 +1,14 @@
-import random
 from Base.Roslina import Roslina
 
 
 class Trawa(Roslina):
-    def __init__(self, print_log, x=0, y=0, sila=0, wiek=0):
-        super().__init__(x, y, 'T', "Trawa", sila, 0)
-        self.wiek = wiek
-        self.rozsiane = False
-        self.print_log = print_log
+    DEFAULT_SILA = 0
+
+    def __init__(self, print_log, x=0, y=0, sila=DEFAULT_SILA, wiek=0):
+        super().__init__(x, y, 'T', "Trawa", sila, 0, print_log, wiek)
 
     def akcja(self, plansza, gra, szerokosc, wysokosc, keycode):
-        rozsiew = random.randint(0, 7)
-        self.rozsiane = rozsiew == 0
+        self.standard_akcja_rozsiew(szansa=8)
 
-    def kolizja(self, off, def_, plansza, szerokosc, wysokosc):
-        return off
+    def kolizja(self, other, plansza, szerokosc, wysokosc):
+        return other
