@@ -15,7 +15,6 @@ class Organizm(ABC):
         self._wiek = wiek
         self._print_log = print_log
         self._rozsiane = False
-        self._rozmnoz = False
         self._zolwodparlatak = False
 
     def print_log(self, message: str):
@@ -61,14 +60,10 @@ class Organizm(ABC):
     def rozsiane(self) -> bool:
         return self._rozsiane
 
-    @property
-    def rozmnoz(self) -> bool:
-        return self._rozmnoz
 
     @property
     def zolwodparlatak(self) -> bool:
         return self._zolwodparlatak
-
 
     @property
     def wiek(self) -> int:
@@ -80,11 +75,14 @@ class Organizm(ABC):
 
     def begin_turn(self):
         self._rozsiane = False
-        self._rozmnoz = False
         self._zolwodparlatak = False
 
     def end_turn(self):
         self.wiek += 1
+
+    @property
+    def has_special_defence(self) -> bool:
+        return False
 
     def kolizja_defend(self, attacker: 'Organizm', plansza, szerokosc: int, wysokosc: int) -> Optional['Organizm']:
         return None

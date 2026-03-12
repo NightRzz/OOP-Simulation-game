@@ -181,10 +181,24 @@ class Swiat:
         winner = attacker.kolizja(defender, self._plansza, self._szerokosc, self._wysokosc)
         if isinstance(defender, Roslina):
             winner = defender.kolizja(attacker, self._plansza, self._szerokosc, self._wysokosc)
-        if winner is attacker:
+        if winner is attacker and defender.has_special_defence:
             repelled = defender.kolizja_defend(attacker, self._plansza, self._szerokosc, self._wysokosc)
             if repelled is defender:
-                winner = defender
+                if defender.x != tx or defender.y != ty:
+                    # escape
+                    ex, ey = defender.x, defender.y
+                    if self._plansza[ex][ey] is None:
+                        self._plansza[ex][ey] = defender
+                    else:
+                        defender.x, defender.y = tx, ty
+                        attacker.x, attacker.y = px, py
+                        return
+                    self._plansza[tx][ty] = attacker
+                    self._plansza[px][py] = None
+                    return
+                else:
+                    # Shell
+                    winner = defender
         self._plansza[tx][ty] = winner
 
         if winner is attacker:

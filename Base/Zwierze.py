@@ -12,7 +12,6 @@ class Zwierze(Organizm, ABC):
 
     def standard_kolizja(self, other, plansza, szerokosc: int, wysokosc: int):
         if self.czy_rozmnaza_sie(other):
-            self._rozmnoz = True
             return self
         if self.sila >= other.sila:
             self.print_log(f"{self.imie} wygrywa z {other.imie}")

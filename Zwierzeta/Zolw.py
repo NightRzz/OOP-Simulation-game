@@ -9,6 +9,10 @@ class Zolw(Zwierze):
     def __init__(self, print_log, x=0, y=0, sila=DEFAULT_SILA, wiek=0):
         super().__init__(x, y, 'Z', "Zolw", sila, 1, print_log, wiek)
 
+    @property
+    def has_special_defence(self) -> bool:
+        return True
+
     def akcja(self, plansza, gra, szerokosc, wysokosc, keycode):
         # Turtle moves only 1 in 3 turns
         if random.randint(0, 2) != 0:
@@ -26,11 +30,4 @@ class Zolw(Zwierze):
         return None
 
     def kolizja(self, other: Zwierze, plansza, szerokosc, wysokosc):
-        if isinstance(other, Zwierze) and self.czy_rozmnaza_sie(other):
-            return self.standard_kolizja(other, plansza, szerokosc, wysokosc)
-        if self.sila > other.sila:
-            self.print_log(f"{self.imie} wygrywa z {other.imie}")
-            return self
-
-        self.print_log(f"{self.imie} przegrywa z {other.imie}")
-        return other
+        return self.standard_kolizja(other, plansza, szerokosc, wysokosc)
