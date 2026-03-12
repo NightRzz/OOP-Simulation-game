@@ -165,7 +165,7 @@ class Swiat:
         tx, ty = attacker.x, attacker.y
         defender = self._plansza[tx][ty]
 
-        if attacker.czy_rozmnaza_sie(defender):
+        if isinstance(defender, Zwierze) and attacker.czy_rozmnaza_sie(defender):
             for dx, dy in _DIRECTIONS:
                 nx, ny = px + dx, py + dy
                 if (0 <= nx < self._wysokosc and 0 <= ny < self._szerokosc

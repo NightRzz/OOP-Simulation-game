@@ -46,9 +46,8 @@ class Czlowiek(Zwierze):
 
     def _tick_ability(self):
         if self.wlacz:
-            if self.licznik < _ABILITY_DURATION:
-                pass  # ability is active, no tick drain
-            else:
+            self.licznik += 1  # increment first, then check
+            if self.licznik >= _ABILITY_DURATION:
                 self.sila -= _ABILITY_STRENGTH_BONUS
                 self.wlacz = False
                 self.licznik = 0
@@ -79,8 +78,6 @@ class Czlowiek(Zwierze):
         elif key == _KEY_ABILITY:
             self._activate_ability()
         self.print_log(f"Ruszasz sie na pole {self.x} {self.y} z sila {self.sila}")
-        if self.wlacz:
-            self.licznik += 1
 
     def kolizja(self, other, plansza, szerokosc, wysokosc):
         return self.standard_kolizja(other, plansza, szerokosc, wysokosc)
