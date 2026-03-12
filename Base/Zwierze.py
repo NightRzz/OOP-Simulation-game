@@ -1,24 +1,21 @@
-from abc import ABC, abstractmethod
-
+from abc import ABC
 from Base.Organizm import Organizm
 
 
 class Zwierze(Organizm, ABC):
+    MIN_WIEK_ROZMNAZANIA: int = 3
+
+    def czy_rozmnaza_sie(self, other: 'Zwierze') -> bool:
+        return (type(self) is type(other)
+                and self.wiek >= self.MIN_WIEK_ROZMNAZANIA
+                and other.wiek >= other.MIN_WIEK_ROZMNAZANIA)
 
     def standard_kolizja(self, other, plansza, szerokosc: int, wysokosc: int):
         if self.czy_rozmnaza_sie(other):
             self._rozmnoz = True
             return self
-        if other.sila >= self.sila:
-            other.print_log(f"{other.imie} wygrywa z {self.imie}")
-            return other
-        self.print_log(f"{self.imie} wygrywa z {other.imie}")
-        return self
-
-    @abstractmethod
-    def akcja(self, plansza, gra, szerokosc: int, wysokosc: int, keycode):
-        pass
-
-    @abstractmethod
-    def kolizja(self, other: Organizm, plansza, szerokosc: int, wysokosc: int) -> Organizm:
-        pass
+        if self.sila >= other.sila:
+            self.print_log(f"{self.imie} wygrywa z {other.imie}")
+            return self
+        other.print_log(f"{other.imie} wygrywa z {self.imie}")
+        return other

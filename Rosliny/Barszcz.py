@@ -20,7 +20,7 @@ class Barszcz(Roslina):
         return self
 
     def _exterminate_neighbours(self, plansza, gra):
-        neighbours = {(self._x + dx, self._y + dy) for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]}
+        neighbours = {(self.x + dx, self.y + dy) for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]}
         for i, org in enumerate(gra):
             if (org is not None
                     and isinstance(org, Zwierze)

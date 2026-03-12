@@ -24,50 +24,63 @@ class Czlowiek(Zwierze):
     def cooldown(self) -> int:
         return self._cooldown
 
+    @cooldown.setter
+    def cooldown(self, value: int):
+        self._cooldown = value
+
     @property
     def licznik(self) -> int:
         return self._licznik
+
+    @licznik.setter
+    def licznik(self, value: int):
+        self._licznik = value
 
     @property
     def wlacz(self) -> bool:
         return self._wlacz
 
+    @wlacz.setter
+    def wlacz(self, value: bool):
+        self._wlacz = value
+
     def _tick_ability(self):
-        if self._wlacz:
-            if self._licznik < _ABILITY_DURATION:
-                self._sila -= 1
+        if self.wlacz:
+            if self.licznik < _ABILITY_DURATION:
+                pass  # ability is active, no tick drain
             else:
-                self._wlacz = False
-                self._licznik = 0
-                self._cooldown = 0
+                self.sila -= _ABILITY_STRENGTH_BONUS
+                self.wlacz = False
+                self.licznik = 0
+                self.cooldown = 0
                 self.print_log("Umiejetnosc czlowieka przestala dzialac")
         else:
-            self._cooldown += 1
+            self.cooldown += 1
 
     def _activate_ability(self):
-        if self._cooldown < _ABILITY_COOLDOWN_READY:
+        if self.cooldown < _ABILITY_COOLDOWN_READY:
             self.print_log("Umiejetnosc czlowieka nie gotowa")
-        elif not self._wlacz:
+        elif not self.wlacz:
             self.print_log("Umiejetnosc czlowieka wlaczona")
-            self._sila += _ABILITY_STRENGTH_BONUS
-            self._wlacz = True
+            self.sila += _ABILITY_STRENGTH_BONUS
+            self.wlacz = True
 
     def akcja(self, plansza, gra, szerokosc, wysokosc, keycode):
         self._tick_ability()
         key = keycode or 0
-        if key == _KEY_UP and self._x > 0:
-            self._x -= 1
-        elif key == _KEY_DOWN and self._x < wysokosc - 1:
-            self._x += 1
-        elif key == _KEY_LEFT and self._y > 0:
-            self._y -= 1
-        elif key == _KEY_RIGHT and self._y < szerokosc - 1:
-            self._y += 1
+        if key == _KEY_UP and self.x > 0:
+            self.x -= 1
+        elif key == _KEY_DOWN and self.x < wysokosc - 1:
+            self.x += 1
+        elif key == _KEY_LEFT and self.y > 0:
+            self.y -= 1
+        elif key == _KEY_RIGHT and self.y < szerokosc - 1:
+            self.y += 1
         elif key == _KEY_ABILITY:
             self._activate_ability()
-        self.print_log(f"Ruszasz sie na pole {self._x} {self._y} z sila {self._sila}")
-        if self._wlacz:
-            self._licznik += 1
+        self.print_log(f"Ruszasz sie na pole {self.x} {self.y} z sila {self.sila}")
+        if self.wlacz:
+            self.licznik += 1
 
     def kolizja(self, other, plansza, szerokosc, wysokosc):
         return self.standard_kolizja(other, plansza, szerokosc, wysokosc)

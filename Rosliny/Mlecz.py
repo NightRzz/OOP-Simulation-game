@@ -1,4 +1,3 @@
-import random
 from Base.Roslina import Roslina
 
 
@@ -9,7 +8,7 @@ class Mlecz(Roslina):
         super().__init__(x, y, 'M', "Mlecz", sila, 0, print_log, wiek)
 
     def akcja(self, plansza, gra, szerokosc, wysokosc, keycode):
-        self._rozsiane = any(random.randint(0, 7) == 0 for _ in range(3))
+        self.multi_akcja_rozsiew(rolls=3, szansa=8)
 
     def kolizja(self, other, plansza, szerokosc, wysokosc):
         return other

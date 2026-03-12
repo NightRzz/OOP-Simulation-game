@@ -15,7 +15,7 @@ class CyberOwca(Zwierze):
             for y in range(szerokosc):
                 org = plansza[x][y]
                 if isinstance(org, Barszcz):
-                    dist = abs(self._x - x) + abs(self._y - y)
+                    dist = abs(self.x - x) + abs(self.y - y)
                     if dist < best_dist:
                         best_dist, nearest = dist, org
         return nearest
@@ -23,19 +23,19 @@ class CyberOwca(Zwierze):
     def akcja(self, plansza, gra, szerokosc, wysokosc, keycode):
         target = self._find_nearest_barszcz(plansza, szerokosc, wysokosc)
         if target:
-            if target.x < self._x:
-                self._x -= 1
-            elif target.x > self._x:
-                self._x += 1
-            elif target.y < self._y:
-                self._y -= 1
-            elif target.y > self._y:
-                self._y += 1
+            if target.x < self.x:
+                self.x -= 1
+            elif target.x > self.x:
+                self.x += 1
+            elif target.y < self.y:
+                self.y -= 1
+            elif target.y > self.y:
+                self.y += 1
         else:
             dx, dy = random.choice([(0, -1), (0, 1), (1, 0), (-1, 0)])
-            nx, ny = self._x + dx, self._y + dy
+            nx, ny = self.x + dx, self.y + dy
             if 0 <= nx < wysokosc and 0 <= ny < szerokosc:
-                self._x, self._y = nx, ny
+                self.x, self.y = nx, ny
 
     def kolizja(self, other, plansza, szerokosc, wysokosc):
         return self.standard_kolizja(other, plansza, szerokosc, wysokosc)
